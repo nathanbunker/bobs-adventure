@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bob's Adventure</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Nunito:wght@400;700&display=swap">
+<style>
+  html, body { height: 100%; margin: 0; background: #0e1222; overflow: hidden; }
+  body { display: grid; place-items: center; font-family: Nunito, system-ui, sans-serif; color: #eef1ff; }
+  #game {
+    width: min(100vw, calc(100vh * 16 / 9));
+    aspect-ratio: 16 / 9;
+    display: block;
+    outline: none;
+  }
+  #tuning {
+    position: fixed; top: 16px; right: 16px; width: 280px;
+    background: #27315aee; border-radius: 14px; padding: 14px 18px;
+    display: flex; flex-direction: column; gap: 12px;
+    box-shadow: 0 10px 30px #0008;
+  }
+  #tuning[hidden] { display: none; }
+  #tuning h2 { font-family: Gaegu, cursive; font-size: 1.8rem; margin: 0; }
+  #tuning label { display: flex; flex-direction: column; gap: 4px; font-size: .9rem; }
+  #tuning b { color: #ffe9a8; }
+  #tuning button {
+    font: inherit; font-weight: 700; padding: 6px 12px; border-radius: 99px;
+    border: 0; background: #ffe9a8; color: #151b30; cursor: pointer; align-self: start;
+  }
+  #tuning p { margin: 0; color: #aeb6dc; font-size: .85rem; }
+</style>
+</head>
+<body>
+<canvas id="game" width="1280" height="720" tabindex="0"></canvas>
+<div id="tuning" hidden></div>
+<script src="levels.js"></script>
+<script src="story.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

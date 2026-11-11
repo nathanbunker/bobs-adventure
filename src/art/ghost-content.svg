@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" width="200" height="180">
+  <!-- Body -->
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Content eyes: calm vertical dashes -->
+  <g fill="none" stroke="#333333" stroke-width="4" stroke-linecap="round">
+    <path d="M 70 60 L 70 82"/>
+    <path d="M 130 60 L 130 82"/>
+  </g>
+</svg>

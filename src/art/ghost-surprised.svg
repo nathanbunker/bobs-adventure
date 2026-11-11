@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" width="200" height="180">
+  <!-- Body -->
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Surprised: raised brows, big shiny eyes -->
+  <g fill="none" stroke="#333333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 59 50 Q 70 43 81 50"/><path d="M 119 50 Q 130 43 141 50"/>
+  </g>
+  <circle cx="70" cy="72" r="9" fill="#333333"/><circle cx="130" cy="72" r="9" fill="#333333"/>
+  <circle cx="73" cy="69" r="3" fill="#ffffff"/><circle cx="133" cy="69" r="3" fill="#ffffff"/>
+</svg>

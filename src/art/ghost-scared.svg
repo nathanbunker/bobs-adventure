@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" width="200" height="180">
+  <!-- Body -->
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Scared: wide eyes with tiny pupils, sweat drop -->
+  <g fill="none" stroke="#333333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 58 52 L 80 46"/><path d="M 142 52 L 120 46"/>
+  </g>
+  <circle cx="70" cy="72" r="11" fill="#ffffff" stroke="#333333" stroke-width="3.5"/>
+  <circle cx="130" cy="72" r="11" fill="#ffffff" stroke="#333333" stroke-width="3.5"/>
+  <circle cx="70" cy="72" r="3" fill="#333333"/><circle cx="130" cy="72" r="3" fill="#333333"/>
+  <path d="M 156 46 C 156 46, 150 56, 150 60 A 6 6 0 0 0 162 60 C 162 56, 156 46, 156 46 Z" fill="#8cc8f0" stroke="#333333" stroke-width="2"/>
+</svg>

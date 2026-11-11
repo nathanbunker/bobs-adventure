@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Level Workshop · Bob's Adventure</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Nunito:wght@400;700;800&display=swap">
+<style>
+  :root {
+    --sky: #151b30; --page: #0e1222; --card: #1f2746; --card2: #27315a;
+    --ink: #eef1ff; --muted: #aeb6dc; --moon: #ffe9a8; --pink: #ff8fb1;
+    --good: #8fd88a; --warn: #ffd27a; --bad: #ff8f8f;
+    --display: "Gaegu", "Comic Sans MS", cursive;
+    --body: "Nunito", system-ui, sans-serif;
+    --code: "Consolas", "Courier New", monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--body); font-size: 16px; }
+  .wrap { max-width: 1500px; margin: 0 auto; padding-inline: 16px; padding-block: 20px 40px; display: flex; flex-direction: column; gap: 18px; }
+  header { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+  h1 { font-family: var(--display); font-size: 3rem; margin: 0; line-height: 1; }
+  h2 { font-family: var(--display); font-size: 1.8rem; margin: 0; }
+  header p { margin: 0; color: var(--muted); max-width: 70ch; }
+  a { color: var(--moon); }
+
+  .top { display: grid; grid-template-columns: 220px 1fr; gap: 16px; align-items: start; }
+  .palette { background: var(--card); border-radius: 16px; padding: 10px; display: flex; flex-direction: column; gap: 4px; }
+  .palette button {
+    display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 10px;
+    background: transparent; border: 2px solid transparent; border-radius: 10px; padding: 3px 8px;
+    color: var(--ink); font: inherit; font-size: .95rem; text-align: left; cursor: pointer;
+  }
+  .palette button:hover { background: var(--card2); }
+  .palette button.on { border-color: var(--moon); background: var(--card2); }
+  .palette button:focus-visible { outline: 2px solid var(--moon); }
+  .palette canvas { width: 40px; height: 40px; border-radius: 6px; background: var(--sky); }
+  .palette kbd { font-family: var(--code); font-weight: 700; color: var(--moon); font-size: 1.1rem; }
+  .palette .tip { color: var(--muted); font-size: .8rem; padding: 8px 6px 2px; }
+
+  .stage { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+  #view { width: 100%; height: auto; aspect-ratio: 16 / 9; display: block; border-radius: 12px; cursor: crosshair; }
+  .status { color: var(--muted); font-size: .95rem; min-height: 1.4em; }
+  .status b { color: var(--ink); }
+
+  .bottom { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start; }
+  .panel { background: var(--card); border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .panel p { margin: 0; color: var(--muted); }
+  .gridbox { display: flex; gap: 6px; font-family: var(--code); font-size: 17px; line-height: 1.25; }
+  .rownums { color: #5d6796; text-align: right; user-select: none; padding-top: 9px; }
+  #gridText {
+    font: inherit; line-height: inherit; color: var(--ink); background: var(--sky);
+    border: 2px solid var(--card2); border-radius: 10px; padding: 8px 10px;
+    resize: none; white-space: pre; overflow: hidden; letter-spacing: .15em;
+    width: calc(33 * (1ch + .15em) + 24px);
+  }
+  #gridText:focus { outline: none; border-color: var(--moon); }
+
+  .side { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+  label { display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: .9rem; }
+  input, select {
+    font: inherit; font-weight: 400; font-size: 1rem; color: var(--ink); background: var(--sky);
+    border: 2px solid var(--card2); border-radius: 10px; padding: 8px 10px;
+  }
+  input:focus, select:focus { outline: none; border-color: var(--moon); }
+  .buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+  .btn {
+    font: inherit; font-weight: 800; padding: 9px 18px; border-radius: 99px; border: 0; cursor: pointer;
+    background: var(--moon); color: var(--sky); text-decoration: none; display: inline-block;
+  }
+  .btn.plain { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 2px var(--muted); }
+  .btn:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
+  #copied { color: var(--good); font-weight: 700; }
+  ul.checks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  ul.checks li { display: flex; gap: 8px; align-items: baseline; }
+  ul.checks .good::before { content: "✓"; color: var(--good); font-weight: 800; }
+  ul.checks .warn::before { content: "!"; color: var(--warn); font-weight: 800; padding-inline: 3px; }
+  ul.checks .bad::before { content: "✗"; color: var(--bad); font-weight: 800; }
+  ol { margin: 0; padding-left: 1.3em; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
+  ol b, ol code { color: var(--ink); }
+  pre {
+    margin: 0; background: var(--sky); border-radius: 10px; padding: 10px 12px;
+    font-family: var(--code); font-size: 13px; line-height: 1.3; color: var(--muted);
+    overflow-x: auto; max-height: 220px;
+  }
+  pre .k { color: var(--pink); }
+  pre .s { color: var(--good); }
+
+  @media (max-width: 1100px) {
+    .top, .bottom, .side { grid-template-columns: 1fr; }
+    .palette { flex-direction: row; flex-wrap: wrap; }
+    .gridbox { overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Level Workshop</h1>
+    <a href="index.html">← Bob's Adventure</a>
+    <p>Pick a block on the left, then click or drag on the cave to put it there. Right-click erases.
+       The letters underneath are the same level written as code. Change one and the other changes too.</p>
+  </header>
+
+  <div class="top">
+    <nav class="palette" id="palette" aria-label="Blocks"></nav>
+    <section class="stage">
+      <canvas id="view" width="1280" height="720"></canvas>
+      <div class="status" id="status">Move over the cave to see each spot's row and column.</div>
+    </section>
+  </div>
+
+  <div class="bottom">
+    <section class="panel">
+      <h2>Your level as code</h2>
+      <p>Each letter is one block. You can type here too.</p>
+      <div class="gridbox">
+        <div class="rownums" id="rownums" aria-hidden="true"></div>
+        <textarea id="gridText" rows="18" cols="34" spellcheck="false" aria-label="Level grid"></textarea>
+      </div>
+    </section>
+
+    <div class="side">
+      <section class="panel">
+        <label>Level name <input id="levelName" maxlength="40"></label>
+        <label>Start from <select id="startFrom"></select></label>
+        <div class="buttons">
+          <a class="btn" id="testLink" target="_blank">Test play ▶</a>
+          <button class="btn plain" id="undo" type="button">Undo</button>
+        </div>
+        <h2>Checks</h2>
+        <ul class="checks" id="checks"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>Add it to the game</h2>
+        <ol>
+          <li>Click <b>Copy my level</b>.</li>
+          <li>Open <code>levels.js</code> in Notepad.</li>
+          <li>Near the bottom, find the line that says <code>];</code> and paste your level just above it.</li>
+          <li>Save, then refresh the game. Your level comes after the others.</li>
+        </ol>
+        <div class="buttons">
+          <button class="btn" id="copy" type="button">Copy my level</button>
+          <span id="copied" aria-live="polite"></span>
+        </div>
+        <p>This is the code you'll paste:</p>
+        <pre id="snippet"></pre>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script src="levels.js"></script>
+<script>
+const COLS = 32, ROWS = 18, TILE = 40;
+
+// Every block she can place. The letter is what goes in levels.js.
+const BLOCKS = [
+  { ch: ".", name: "Empty air", tip: "erases" },
+  { ch: "#", name: "Rock" },
+  { ch: "B", name: "Bob's start", tip: "only one" },
+  { ch: "X", name: "Exit" },
+  { ch: "C", name: "Lantern", tip: "checkpoint" },
+  { ch: "o", name: "Present" },
+  { ch: "^", name: "Spikes" },
+  { ch: "V", name: "Stalactite", tip: "hang it under rock" },
+  { ch: "M", name: "Moss", tip: "leave a hole under it" },
+  { ch: "~", name: "Bouncy slime" },
+  { ch: "H", name: "Hook" },
+  { ch: "Z", name: "Zip line post", tip: "two on one row" },
+  { ch: "F", name: "Frank's spot", tip: "he might pop in" },
+];
+const NAMES = Object.fromEntries(BLOCKS.map((b) => [b.ch, b.name]));
+
+const COLORS = {
+  sky: "#151b30", rock: "#3b4675", rockTop: "#5a68a0", mossTop: "#6f9a63", mossTuft: "#86b277",
+  outline: "#333333", spike: "#c9cfe8", stalactite: "#8e9bc9", lantern: "#ffe9a8", exit: "#fff4cf",
+  present: "#ffd27a", bow: "#ff5c8a", metal: "#d5dbef", wood: "#9a7350", rope: "#e2d3ad",
+  slime: "#79d66f", slimeDark: "#4fa548", grid: "rgba(238, 241, 255, 0.06)", hover: "#ffe9a8",
+};
+
+const bobImg = new Image(); bobImg.src = "art/ghost-content.svg";
+const frankImg = new Image(); frankImg.src = "art/frank.svg";
+
+// ---- The level ----
+let grid = [];
+let levelName = "My Level";
+let selected = "#";
+const history = [];
+
+function emptyCave() {
+  const rows = [];
+  for (let r = 0; r < ROWS; r++) {
+    let row = "";
+    for (let c = 0; c < COLS; c++) {
+      const wall = r === 0 || r >= 13 || c === 0 || c === COLS - 1;
+      row += wall ? "#" : ".";
+    }
+    rows.push(row);
+  }
+  rows[12] = "#.B" + ".".repeat(COLS - 5) + "X#";
+  return rows.join("\n");
+}
+
+function normalize(ch) {
+  if (ch === " " || ch === undefined) return ".";
+  if (ch === "o" || ch === "O" || ch === "0") return "o";
+  return ch.toUpperCase();
+}
+
+function textToGrid(text) {
+  const lines = text.split("\n").filter((l, i, all) => !(l.trim() === "" && (i === 0 || i === all.length - 1)));
+  const g = [];
+  for (let r = 0; r < ROWS; r++) {
+    const line = (lines[r] || "").replace(/\r/g, "");
+    const row = [];
+    for (let c = 0; c < COLS; c++) row.push(normalize(line[c]));
+    g.push(row);
+  }
+  return g;
+}
+
+function gridToText() {
+  return grid.map((row) => row.join("")).join("\n");
+}
+
+function remember() {
+  history.push({ text: gridToText(), name: levelName });
+  if (history.length > 200) history.shift();
+}
+
+function setCell(c, r, ch) {
+  if (grid[r][c] === ch) return;
+  if (ch === "B") {
+    // Bob only starts in one place, so move him
+    for (const row of grid) for (let i = 0; i < COLS; i++) if (row[i] === "B") row[i] = ".";
+  }
+  grid[r][c] = ch;
+}
+
+// ---- Drawing (looks like the game) ----
+function drawRock(ctx, x, y, topEdge) {
+  ctx.fillStyle = COLORS.rock;
+  ctx.fillRect(x, y, TILE, TILE);
+  if (topEdge) { ctx.fillStyle = COLORS.rockTop; ctx.fillRect(x, y, TILE, 6); }
+}
+
+function drawPresent(ctx, cx, cy) {
+  const glow = ctx.createRadialGradient(cx, cy, 2, cx, cy, 22);
+  glow.addColorStop(0, "rgba(255, 210, 122, 0.45)");
+  glow.addColorStop(1, "rgba(255, 210, 122, 0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(cx - 22, cy - 22, 44, 44);
+  ctx.strokeStyle = COLORS.outline; ctx.lineWidth = 2;
+  ctx.fillStyle = COLORS.present;
+  ctx.beginPath(); ctx.arc(cx, cy, 9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = COLORS.bow; ctx.lineWidth = 1.5;
+  for (const d of [-1, 1]) {
+    ctx.beginPath(); ctx.moveTo(cx, cy - 9); ctx.lineTo(cx + d * 7, cy - 13); ctx.lineTo(cx + d * 7, cy - 5);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+}
+
+function drawHook(ctx, cx, cy) {
+  ctx.lineCap = "round";
+  for (const [color, width] of [[COLORS.outline, 7], [COLORS.metal, 3.5]]) {
+    ctx.strokeStyle = color; ctx.lineWidth = width;
+    ctx.beginPath();
+    ctx.arc(cx, cy - 10, 4, 0, Math.PI * 2);
+    ctx.moveTo(cx, cy - 6); ctx.lineTo(cx, cy + 4);
+    ctx.arc(cx - 6, cy + 4, 6, 0, Math.PI);
+    ctx.stroke();
+  }
+}
+
+function drawTile(ctx, ch, x, y, g, c, r) {
+  const above = g && r > 0 ? g[r - 1][c] : ".";
+  switch (ch) {
+    case "#": drawRock(ctx, x, y, above !== "#" && above !== "M"); break;
+    case "M":
+      drawRock(ctx, x, y, false);
+      ctx.fillStyle = COLORS.mossTop; ctx.fillRect(x, y, TILE, 9);
+      ctx.fillStyle = COLORS.mossTuft;
+      for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc(x + 5 + i * 10, y + 2, 4, Math.PI, 0); ctx.fill(); }
+      break;
+    case "^":
+      ctx.fillStyle = COLORS.spike; ctx.strokeStyle = COLORS.outline; ctx.lineWidth = 2; ctx.lineJoin = "round";
+      for (let i = 0; i < 3; i++) {
+        const sx = x + 2 + i * 12;
+        ctx.beginPath(); ctx.moveTo(sx, y + TILE); ctx.lineTo(sx + 6, y + 14); ctx.lineTo(sx + 12, y + TILE);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+      }
+      break;
+    case "V":
+      ctx.fillStyle = COLORS.stalactite; ctx.strokeStyle = COLORS.outline; ctx.lineWidth = 2.5; ctx.lineJoin = "round";
+      ctx.beginPath(); ctx.moveTo(x + 6, y); ctx.lineTo(x + 34, y); ctx.lineTo(x + 20, y + 38); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      break;
+    case "C":
+      ctx.fillStyle = "#6b7396"; ctx.fillRect(x + 18, y + 22, 4, 18);
+      ctx.strokeStyle = COLORS.outline; ctx.lineWidth = 2.5;
+      ctx.fillStyle = COLORS.lantern;
+      ctx.beginPath(); ctx.roundRect(x + 11, y + 4, 18, 20, 4); ctx.fill(); ctx.stroke();
+      break;
+    case "o": drawPresent(ctx, x + 20, y + 22); break;
+    case "H": drawHook(ctx, x + 22, y + 20); break;
+    case "Z":
+      ctx.fillStyle = COLORS.wood; ctx.strokeStyle = COLORS.outline; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.rect(x + 16, y + 2, 8, TILE - 2); ctx.fill(); ctx.stroke();
+      break;
+    case "~":
+      ctx.fillStyle = COLORS.slime; ctx.strokeStyle = COLORS.slimeDark; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(x, y + TILE);
+      ctx.bezierCurveTo(x, y + TILE - 29, x + TILE, y + TILE - 29, x + TILE, y + TILE);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      break;
+    case "X": {
+      const cx = x + 20;
+      ctx.fillStyle = COLORS.exit;
+      ctx.beginPath(); ctx.moveTo(cx - 15, y + TILE); ctx.lineTo(cx - 15, y + 18);
+      ctx.arc(cx, y + 18, 15, Math.PI, 0); ctx.lineTo(cx + 15, y + TILE); ctx.closePath(); ctx.fill();
+      break;
+    }
+    case "B":
+      if (bobImg.complete && bobImg.naturalWidth) ctx.drawImage(bobImg, x - 4, y + 2, 48, 43);
+      break;
+    case "F":
+      ctx.globalAlpha = 0.75;
+      if (frankImg.complete && frankImg.naturalWidth) ctx.drawImage(frankImg, x - 4, y + 2, 48, 43);
+      ctx.globalAlpha = 1;
+      break;
+    case ".": break;
+    default:
+      // A letter the game doesn't know
+      ctx.strokeStyle = "#ff8f8f"; ctx.setLineDash([4, 4]); ctx.lineWidth = 2;
+      ctx.strokeRect(x + 3, y + 3, TILE - 6, TILE - 6); ctx.setLineDash([]);
+      ctx.fillStyle = "#ff8f8f"; ctx.font = "bold 18px Consolas, monospace";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillText(ch, x + 20, y + 21);
+  }
+}
+
+const view = document.getElementById("view");
+const ctx = view.getContext("2d");
+let hover = null;
+
+function render() {
+  ctx.fillStyle = COLORS.sky;
+  ctx.fillRect(0, 0, view.width, view.height);
+  // Zip line ropes between pairs of posts on the same row
+  for (let r = 0; r < ROWS; r++) {
+    const posts = [];
+    for (let c = 0; c < COLS; c++) if (grid[r][c] === "Z") posts.push(c);
+    for (let i = 0; i + 1 < posts.length; i += 2) {
+      ctx.strokeStyle = COLORS.rope; ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(posts[i] * TILE + 20, r * TILE + 8);
+      ctx.quadraticCurveTo((posts[i] + posts[i + 1]) * TILE / 2 + 20, r * TILE + 14, posts[i + 1] * TILE + 20, r * TILE + 8);
+      ctx.stroke();
+    }
+  }
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      drawTile(ctx, grid[r][c], c * TILE, r * TILE, grid, c, r);
+  // Faint grid so each block's spot is easy to see
+  ctx.strokeStyle = COLORS.grid; ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let c = 1; c < COLS; c++) { ctx.moveTo(c * TILE + 0.5, 0); ctx.lineTo(c * TILE + 0.5, ROWS * TILE); }
+  for (let r = 1; r < ROWS; r++) { ctx.moveTo(0, r * TILE + 0.5); ctx.lineTo(COLS * TILE, r * TILE + 0.5); }
+  ctx.stroke();
+  if (hover) {
+    ctx.globalAlpha = 0.6;
+    drawTile(ctx, selected, hover.c * TILE, hover.r * TILE, null, hover.c, hover.r);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = COLORS.hover; ctx.lineWidth = 3;
+    ctx.strokeRect(hover.c * TILE + 1.5, hover.r * TILE + 1.5, TILE - 3, TILE - 3);
+  }
+}
+
+// ---- Checks ----
+function checks() {
+  const out = [];
+  const count = (ch) => grid.flat().filter((x) => x === ch).length;
+  if (count("B") === 0) out.push(["bad", "Bob needs a start. Put a <b>B</b> somewhere."]);
+  else out.push(["good", "Bob has a start."]);
+  if (count("X") === 0) out.push(["bad", "There's no exit (<b>X</b>) yet, so Bob can't finish."]);
+  else out.push(["good", "There's an exit."]);
+  for (let r = 0; r < ROWS; r++) {
+    const z = grid[r].filter((x) => x === "Z").length;
+    if (z % 2 === 1) out.push(["warn", `Row ${r + 1}: a zip line post needs a partner on the same row.`]);
+  }
+  if (count("Z") >= 2 && count("H") === 0) out.push(["warn", "There's a zip line but no hook (<b>H</b>) to find."]);
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      if (grid[r][c] === "V" && (r === 0 || grid[r - 1][c] !== "#"))
+        out.push(["warn", `Row ${r + 1}, column ${c + 1}: a stalactite should hang right under rock.`]);
+  const known = new Set(BLOCKS.map((b) => b.ch).concat(["R"]));
+  const unknown = [...new Set(grid.flat().filter((x) => !known.has(x)))];
+  if (unknown.length) out.push(["warn", `The game doesn't know these letters yet: <b>${unknown.join(" ")}</b>`]);
+  out.push(["good", `${count("o")} present${count("o") === 1 ? "" : "s"} and ${count("C")} lantern${count("C") === 1 ? "" : "s"}.`]);
+  document.getElementById("checks").innerHTML = out.map(([k, t]) => `<li class="${k}"><span>${t}</span></li>`).join("");
+}
+
+// ---- The code to copy ----
+function snippetText() {
+  return `  {\n    name: ${JSON.stringify(levelName)},\n    grid: \`\n${gridToText()}\n\`,\n  },`;
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[ch]);
+}
+
+function showSnippet() {
+  const s = escapeHtml(snippetText())
+    .replace(/^    name: (.*),$/m, '    <span class="k">name</span>: <span class="s">$1</span>,')
+    .replace(/^    grid:/m, '    <span class="k">grid</span>:');
+  document.getElementById("snippet").innerHTML = s;
+}
+
+// ---- Keeping everything in step ----
+const gridText = document.getElementById("gridText");
+const nameInput = document.getElementById("levelName");
+
+function updateAll({ fromText = false } = {}) {
+  if (!fromText) {
+    const pos = gridText.selectionStart;
+    gridText.value = gridToText();
+    if (document.activeElement === gridText) gridText.setSelectionRange(pos, pos);
+  }
+  render();
+  checks();
+  showSnippet();
+  document.getElementById("testLink").href =
+    "play.html#test=" + encodeURIComponent(JSON.stringify({ name: levelName, grid: gridToText() }));
+  try { localStorage.setItem("ghost-workshop", JSON.stringify({ name: levelName, text: gridToText() })); } catch (e) {}
+}
+
+// ---- Palette ----
+const palette = document.getElementById("palette");
+for (const b of BLOCKS) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.dataset.ch = b.ch;
+  btn.title = b.tip ? `${b.name} (${b.tip})` : b.name;
+  const icon = document.createElement("canvas");
+  icon.width = icon.height = TILE;
+  btn.append(icon);
+  btn.insertAdjacentHTML("beforeend", `<span>${b.name}</span><kbd>${escapeHtml(b.ch)}</kbd>`);
+  btn.addEventListener("click", () => select(b.ch));
+  palette.append(btn);
+}
+palette.insertAdjacentHTML("beforeend", `<div class="tip">Tip: press a block's letter on the keyboard to pick it.</div>`);
+
+function drawIcons() {
+  for (const btn of palette.querySelectorAll("button")) {
+    const c = btn.querySelector("canvas").getContext("2d");
+    c.clearRect(0, 0, TILE, TILE);
+    drawTile(c, btn.dataset.ch, 0, 0, null, 0, 0);
+  }
+}
+
+function select(ch) {
+  selected = ch;
+  for (const btn of palette.querySelectorAll("button")) btn.classList.toggle("on", btn.dataset.ch === ch);
+  render();
+}
+
+// ---- Painting on the cave ----
+let painting = null; // the block being painted while the mouse is down
+
+function cellFromEvent(e) {
+  const rect = view.getBoundingClientRect();
+  const c = Math.floor(((e.clientX - rect.left) / rect.width) * COLS);
+  const r = Math.floor(((e.clientY - rect.top) / rect.height) * ROWS);
+  return c >= 0 && c < COLS && r >= 0 && r < ROWS ? { c, r } : null;
+}
+
+view.addEventListener("contextmenu", (e) => e.preventDefault());
+view.addEventListener("pointerdown", (e) => {
+  const cell = cellFromEvent(e);
+  if (!cell) return;
+  remember();
+  painting = e.button === 2 ? "." : selected;
+  view.setPointerCapture(e.pointerId);
+  setCell(cell.c, cell.r, painting);
+  updateAll();
+});
+view.addEventListener("pointermove", (e) => {
+  hover = cellFromEvent(e);
+  const status = document.getElementById("status");
+  if (hover) {
+    const ch = grid[hover.r][hover.c];
+    status.innerHTML = `Row <b>${hover.r + 1}</b>, column <b>${hover.c + 1}</b>: ${NAMES[ch] || "Unknown letter"} <b>${escapeHtml(ch)}</b>`;
+  }
+  if (painting && hover) {
+    setCell(hover.c, hover.r, painting === "B" ? "B" : painting);
+    updateAll();
+  } else {
+    render();
+  }
+});
+view.addEventListener("pointerup", () => { painting = null; });
+view.addEventListener("pointerleave", () => { hover = null; render(); });
+
+// ---- Typing in the grid ----
+// Typing replaces the letter under the cursor (like painting with the keyboard),
+// so the rows always stay 32 letters long.
+const LINE = COLS + 1; // 32 letters plus the end of the line
+
+function moveCursor(pos) {
+  gridText.setSelectionRange(pos, pos);
+}
+
+gridText.addEventListener("keydown", (e) => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  let pos = gridText.selectionStart;
+  let r = Math.floor(pos / LINE), c = pos % LINE;
+  if (e.key.length === 1) {
+    e.preventDefault();
+    if (c >= COLS) { r++; c = 0; }
+    if (r >= ROWS) return;
+    remember();
+    setCell(c, r, normalize(e.key));
+    updateAll();
+    moveCursor(r * LINE + c + 1);
+  } else if (e.key === "Backspace" || e.key === "Delete") {
+    e.preventDefault();
+    if (e.key === "Backspace") {
+      if (pos === 0) return;
+      pos--;
+      if (pos % LINE === COLS) pos--; // skip back over the end of the line
+    }
+    r = Math.floor(pos / LINE); c = pos % LINE;
+    if (c >= COLS || r >= ROWS) return;
+    remember();
+    setCell(c, r, ".");
+    updateAll();
+    moveCursor(pos);
+  } else if (e.key === "Enter") {
+    e.preventDefault();
+    moveCursor(Math.min(ROWS - 1, r + 1) * LINE);
+  }
+});
+
+let textBefore = null;
+gridText.addEventListener("focus", () => { textBefore = gridText.value; });
+gridText.addEventListener("input", () => {
+  if (textBefore !== null) { history.push({ text: textBefore, name: levelName }); textBefore = null; }
+  grid = textToGrid(gridText.value);
+  updateAll({ fromText: true });
+});
+gridText.addEventListener("blur", () => { gridText.value = gridToText(); });
+
+nameInput.addEventListener("input", () => {
+  levelName = nameInput.value.trim() || "My Level";
+  updateAll();
+});
+
+// ---- Undo ----
+function undo() {
+  const last = history.pop();
+  if (!last) return;
+  grid = textToGrid(last.text);
+  levelName = last.name;
+  nameInput.value = levelName;
+  updateAll();
+}
+document.getElementById("undo").addEventListener("click", undo);
+
+addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && document.activeElement !== gridText) {
+    e.preventDefault();
+    undo();
+    return;
+  }
+  const typing = ["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName);
+  if (typing || e.ctrlKey || e.metaKey || e.altKey) return;
+  const block = BLOCKS.find((b) => b.ch === normalize(e.key));
+  if (block) select(block.ch);
+});
+
+// ---- Start from ----
+const startFrom = document.getElementById("startFrom");
+const starts = [{ label: "(keep what I have)" }, { label: "An empty cave", name: "My Level", grid: emptyCave() }]
+  .concat(LEVELS.map((l, i) => ({ label: `Level ${i + 1}: ${l.name}`, name: l.name + " (copy)", grid: l.grid })));
+starts.forEach((s, i) => startFrom.add(new Option(s.label, i)));
+startFrom.addEventListener("change", () => {
+  const s = starts[startFrom.value];
+  startFrom.value = 0;
+  if (!s.grid) return;
+  if (!confirm(`Start over from "${s.label}"? (Undo can bring your level back.)`)) return;
+  remember();
+  grid = textToGrid(s.grid);
+  levelName = s.name;
+  nameInput.value = levelName;
+  updateAll();
+});
+
+// ---- Copy ----
+document.getElementById("copy").addEventListener("click", async () => {
+  const text = snippetText();
+  const msg = document.getElementById("copied");
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (e) {
+    const t = document.createElement("textarea");
+    t.value = text;
+    document.body.append(t);
+    t.select();
+    document.execCommand("copy");
+    t.remove();
+  }
+  msg.textContent = "Copied! Now paste it into levels.js.";
+  setTimeout(() => (msg.textContent = ""), 4000);
+});
+
+// ---- Rows numbers next to the grid ----
+document.getElementById("rownums").innerHTML =
+  Array.from({ length: ROWS }, (_, i) => i + 1).join("<br>");
+
+// ---- Start: pick up where she left off, or an empty cave ----
+let saved = null;
+try { saved = JSON.parse(localStorage.getItem("ghost-workshop") || "null"); } catch (e) {}
+grid = textToGrid(saved ? saved.text : emptyCave());
+levelName = saved ? saved.name : "My Level";
+nameInput.value = levelName;
+select("#");
+updateAll();
+drawIcons();
+bobImg.onload = frankImg.onload = () => { drawIcons(); render(); };
+</script>
+</body>
+</html>

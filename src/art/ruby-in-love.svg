@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" width="200" height="180">
+  <!-- Ruby in love: heart eyes, rosy cheeks, her bow -->
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <ellipse cx="54" cy="96" rx="10" ry="5" fill="#ffb3c6"/>
+  <ellipse cx="146" cy="96" rx="10" ry="5" fill="#ffb3c6"/>
+  <path d="M 70 83 C 54 73, 61 60, 70 69 C 79 60, 86 73, 70 83 Z" fill="#ff5c8a" stroke="#333333" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M 130 83 C 114 73, 121 60, 130 69 C 139 60, 146 73, 130 83 Z" fill="#ff5c8a" stroke="#333333" stroke-width="2.5" stroke-linejoin="round"/>
+  <g transform="rotate(20 152 30)" fill="#ff5c8a" stroke="#333333" stroke-width="3" stroke-linejoin="round">
+    <path d="M 152 30 C 132 8, 116 22, 122 36 C 126 46, 140 42, 152 30 Z"/>
+    <path d="M 152 30 C 172 8, 188 22, 182 36 C 178 46, 164 42, 152 30 Z"/>
+    <circle cx="152" cy="30" r="7"/>
+  </g>
+</svg>

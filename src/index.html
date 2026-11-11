@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bob's Adventure</title>
+<link rel="icon" href="art/ghost-content.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Nunito:wght@400;700;800&display=swap">
+<style>
+  :root {
+    --sky: #151b30; --page: #0e1222; --card: #1f2746; --card2: #27315a;
+    --ink: #eef1ff; --muted: #aeb6dc; --moon: #ffe9a8; --pink: #ff8fb1;
+    --display: "Gaegu", "Comic Sans MS", cursive;
+    --body: "Nunito", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    margin: 0; color: var(--ink); font-family: var(--body);
+    background: radial-gradient(ellipse at 50% 0%, #27315a 0%, var(--sky) 45%, var(--page) 100%) fixed;
+    display: grid; place-items: center; min-height: 100vh; padding: 24px 16px;
+  }
+  main { width: 100%; max-width: 760px; display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
+
+  .moon { position: fixed; top: 40px; right: 8vw; width: 70px; height: 70px; border-radius: 50%;
+          background: var(--moon); box-shadow: 0 0 60px #ffe9a866; pointer-events: none; }
+
+  .ghosts { display: flex; align-items: flex-end; justify-content: center; gap: 12px; }
+  .ghosts img { width: clamp(110px, 24vw, 170px); height: auto; animation: float 3.2s ease-in-out infinite; }
+  .ghosts img.ruby { width: clamp(90px, 19vw, 135px); animation-delay: -1.6s; }
+  @keyframes float { 50% { transform: translateY(-10px); } }
+  @media (prefers-reduced-motion: reduce) { .ghosts img { animation: none; } }
+
+  h1 { font-family: var(--display); font-size: clamp(3rem, 11vw, 5.5rem); line-height: .9; margin: 0; color: var(--moon); }
+  .tagline { margin: 0; color: var(--muted); font-size: 1.15rem; }
+
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; width: 100%; }
+  .choice {
+    display: flex; flex-direction: column; gap: 6px; padding: 22px 20px; border-radius: 18px;
+    background: var(--card); color: var(--ink); text-decoration: none; border: 3px solid transparent;
+    transition: transform .15s, border-color .15s, background .15s;
+  }
+  .choice:hover, .choice:focus-visible { border-color: var(--moon); background: var(--card2); transform: translateY(-3px); outline: none; }
+  .choice b { font-family: var(--display); font-size: 2.4rem; line-height: 1; }
+  .choice.play b { color: var(--moon); }
+  .choice.make b { color: var(--pink); }
+  .choice span { color: var(--muted); }
+
+  .keys { color: var(--muted); font-size: .95rem; margin: 0; }
+  kbd { font-family: Consolas, "Courier New", monospace; background: var(--card2); color: var(--ink);
+        border-radius: 6px; padding: 1px 7px; font-size: .9rem; }
+
+  @media (max-width: 560px) { .choices { grid-template-columns: 1fr; } .moon { display: none; } }
+</style>
+</head>
+<body>
+<div class="moon" aria-hidden="true"></div>
+<main>
+  <div class="ghosts">
+    <img src="art/ghost-content.svg" alt="Bob the ghost">
+    <img class="ruby" src="art/ruby-in-love.svg" alt="Ruby the ghost">
+  </div>
+  <h1>Bob's Adventure</h1>
+  <p class="tagline">Help Bob find his way out of the caves and back to Ruby.</p>
+
+  <nav class="choices">
+    <a class="choice play" href="play.html">
+      <b>Play ▶</b>
+      <span>Float, jump and collect wedding presents.</span>
+    </a>
+    <a class="choice make" href="editor.html">
+      <b>Level Workshop</b>
+      <span>Build your own cave and test it.</span>
+    </a>
+  </nav>
+
+  <p class="keys">Move with <kbd>←</kbd> <kbd>→</kbd> · Jump with <kbd>Space</kbd> · Use things with <kbd>E</kbd> · Pause with <kbd>Esc</kbd></p>
+</main>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<title>Ghost Moods</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@700&family=Nunito:wght@400;700&display=swap">
+<style>
+/* Layout: a moonlit night sky; each ghost floats on its own small patch of sky, name written like marker underneath */
+:root {
+  --sky: #1d2540; --sky-deep: #151b30; --card: #27315a; --stage: #323e6e;
+  --ink: #eef1ff; --muted: #aeb6dc; --moon: #ffe9a8; --pink: #ff8fb1;
+  --display: "Gaegu", "Comic Sans MS", cursive;
+  --body: "Nunito", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: radial-gradient(circle at 85% 0%, #2c3766 0, var(--sky) 40%, var(--sky-deep) 100%) fixed, var(--sky);
+  color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1100px; margin: 0 auto; padding-inline: 16px; padding-block: 40px 56px; }
+header { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 32px; }
+.moon { width: 56px; height: 56px; border-radius: 50%; background: var(--moon); box-shadow: 0 0 40px #ffe9a866; flex: none; }
+h1 { font-family: var(--display); font-size: clamp(2.6rem, 7vw, 4rem); line-height: 1; margin: 0; text-wrap: balance; }
+header p { margin: 4px 0 0; color: var(--muted); max-width: 60ch; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px; }
+.card { background: var(--card); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
+.stage { background: var(--stage); padding: 24px 28px 18px; display: grid; place-items: center; }
+.stage svg { width: 100%; max-width: 190px; height: auto; display: block; filter: drop-shadow(0 10px 12px #0006); }
+.card:hover .stage svg { animation: float 1.6s ease-in-out infinite; }
+@keyframes float { 50% { transform: translateY(-8px); } }
+@media (prefers-reduced-motion: reduce) { .card:hover .stage svg { animation: none; } }
+.info { padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 6px; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+h2 { font-family: var(--display); font-size: 2rem; line-height: 1; margin: 0; }
+.info p { margin: 0; color: var(--muted); }
+.tag { font-size: .72rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 9px; border-radius: 99px; background: var(--moon); color: var(--sky-deep); white-space: nowrap; }
+.tag.new { background: transparent; color: var(--muted); box-shadow: inset 0 0 0 1.5px var(--muted); }
+.moment { font-size: .92rem; }
+.moment span { display: block; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--pink); }
+footer { margin-top: 36px; color: var(--muted); font-size: .95rem; }
+</style>
+<div class="wrap">
+  <header>
+    <div class="moon" aria-hidden="true"></div>
+    <div>
+      <h1>Ghost Moods</h1>
+      <p>Eight feelings for one ghost, no mouths needed. Happy and Content come from her own drawings; the other six are ideas to keep, change, or toss.</p>
+    </div>
+  </header>
+  <main class="grid">
+<article class="card">
+  <div class="stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" role="img" aria-label="happy ghost">
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <g fill="none" stroke="#333333" stroke-width="4" stroke-linecap="round">
+    <path d="M 58 78 Q 68 58 80 74"/>
+    <path d="M 142 78 Q 132 58 120 74"/>
+  </g>
+</svg>
+</div>
+  <div class="info">
+    <div class="row"><h2>Happy</h2><span class="tag">Her drawing</span></div>
+    <p>Eyes squeezed shut with joy.</p>
+    <p class="moment"><span>Game moment</span>Winning a level</p>
+  </div>
+</article>
+<article class="card">
+  <div class="stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" role="img" aria-label="content ghost">
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <g fill="none" stroke="#333333" stroke-width="4" stroke-linecap="round">
+    <path d="M 70 60 L 70 82"/>
+    <path d="M 130 60 L 130 82"/>
+  </g>
+</svg>
+</div>
+  <div class="info">
+    <div class="row"><h2>Content</h2><span class="tag">Her drawing</span></div>
+    <p>Calm, just floating along.</p>
+    <p class="moment"><span>Game moment</span>Standing still</p>
+  </div>
+</article>
+<article class="card">
+  <div class="stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" role="img" aria-label="sad ghost">
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <g fill="none" stroke="#333333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 58 64 L 80 56"/><path d="M 142 64 L 120 56"/>
+  </g>
+  <circle cx="70" cy="76" r="5" fill="#333333"/><circle cx="130" cy="76" r="5" fill="#333333"/>
+  <path d="M 66 86 C 66 86, 60 96, 60 100 A 6 6 0 0 0 72 100 C 72 96, 66 86, 66 86 Z" fill="#8cc8f0" stroke="#333333" stroke-width="2"/>
+</svg>
+</div>
+  <div class="info">
+    <div class="row"><h2>Sad</h2><span class="tag new">New idea</span></div>
+    <p>Worried brows and one tear.</p>
+    <p class="moment"><span>Game moment</span>Losing a life</p>
+  </div>
+</article>
+<article class="card">
+  <div class="stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" role="img" aria-label="surprised ghost">
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <g fill="none" stroke="#333333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 59 50 Q 70 43 81 50"/><path d="M 119 50 Q 130 43 141 50"/>
+  </g>
+  <circle cx="70" cy="72" r="9" fill="#333333"/><circle cx="130" cy="72" r="9" fill="#333333"/>
+  <circle cx="73" cy="69" r="3" fill="#ffffff"/><circle cx="133" cy="69" r="3" fill="#ffffff"/>
+</svg>
+</div>
+  <div class="info">
+    <div class="row"><h2>Surprised</h2><span class="tag new">New idea</span></div>
+    <p>Raised brows and big shiny eyes.</p>
+    <p class="moment"><span>Game moment</span>Finding treasure</p>
+  </div>
+</article>
+<article class="card">
+  <div class="stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" role="img" aria-label="sleepy ghost">
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <g fill="none" stroke="#333333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 60 72 Q 70 82 80 72"/><path d="M 120 72 Q 130 82 140 72"/>
+  </g>
+  <g fill="none" stroke="#7a8db8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 112 40 h 8 l -8 9 h 8"/><path d="M 126 26 h 12 l -12 13 h 12"/>
+  </g>
+</svg>
+</div>
+  <div class="info">
+    <div class="row"><h2>Sleepy</h2><span class="tag new">New idea</span></div>
+    <p>Eyes closed, drifting off. z z</p>
+    <p class="moment"><span>Game moment</span>When nobody is playing</p>
+  </div>
+</article>
+<article class="card">
+  <div class="stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" role="img" aria-label="grumpy ghost">
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <g fill="none" stroke="#333333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 57 60 L 80 69"/><path d="M 143 60 L 120 69"/>
+  </g>
+  <circle cx="70" cy="79" r="5" fill="#333333"/><circle cx="130" cy="79" r="5" fill="#333333"/>
+</svg>
+</div>
+  <div class="info">
+    <div class="row"><h2>Grumpy</h2><span class="tag new">New idea</span></div>
+    <p>Brows down, eyes glaring.</p>
+    <p class="moment"><span>Game moment</span>Bumping into a wall</p>
+  </div>
+</article>
+<article class="card">
+  <div class="stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" role="img" aria-label="scared ghost">
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <g fill="none" stroke="#333333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 58 52 L 80 46"/><path d="M 142 52 L 120 46"/>
+  </g>
+  <circle cx="70" cy="72" r="11" fill="#ffffff" stroke="#333333" stroke-width="3.5"/>
+  <circle cx="130" cy="72" r="11" fill="#ffffff" stroke="#333333" stroke-width="3.5"/>
+  <circle cx="70" cy="72" r="3" fill="#333333"/><circle cx="130" cy="72" r="3" fill="#333333"/>
+  <path d="M 156 46 C 156 46, 150 56, 150 60 A 6 6 0 0 0 162 60 C 162 56, 156 46, 156 46 Z" fill="#8cc8f0" stroke="#333333" stroke-width="2"/>
+</svg>
+</div>
+  <div class="info">
+    <div class="row"><h2>Scared</h2><span class="tag new">New idea</span></div>
+    <p>Wide eyes and a nervous sweat drop.</p>
+    <p class="moment"><span>Game moment</span>A monster is near</p>
+  </div>
+</article>
+<article class="card">
+  <div class="stage"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" role="img" aria-label="in-love ghost">
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <ellipse cx="54" cy="94" rx="10" ry="5" fill="#ffb3c6"/>
+  <ellipse cx="146" cy="94" rx="10" ry="5" fill="#ffb3c6"/>
+  <path d="M 70 83 C 54 73, 61 60, 70 69 C 79 60, 86 73, 70 83 Z" fill="#ff5c8a" stroke="#333333" stroke-width="2.5" stroke-linejoin="round"/><path d="M 130 83 C 114 73, 121 60, 130 69 C 139 60, 146 73, 130 83 Z" fill="#ff5c8a" stroke="#333333" stroke-width="2.5" stroke-linejoin="round"/>
+</svg>
+</div>
+  <div class="info">
+    <div class="row"><h2>In Love</h2><span class="tag new">New idea</span></div>
+    <p>Heart eyes and rosy cheeks.</p>
+    <p class="moment"><span>Game moment</span>Meeting another ghost</p>
+  </div>
+</article>
+  </main>
+  <footer>Hover over a ghost to see it float. Which ones should stay? Which feelings are missing?</footer>
+</div>

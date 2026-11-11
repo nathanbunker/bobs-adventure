@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" width="200" height="180">
+  <!-- Body -->
+  <path d="M 15 140 C 2 70, 40 12, 100 12 C 160 12, 198 70, 185 140 C 183 168, 148 178, 130 150 C 122 174, 78 174, 70 150 C 52 178, 17 168, 15 140 Z" fill="#ffffff" stroke="#333333" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Sleepy: closed downward eyes, floating z's -->
+  <g fill="none" stroke="#333333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 60 72 Q 70 82 80 72"/><path d="M 120 72 Q 130 82 140 72"/>
+  </g>
+  <g fill="none" stroke="#7a8db8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 112 40 h 8 l -8 9 h 8"/><path d="M 126 26 h 12 l -12 13 h 12"/>
+  </g>
+</svg>
