@@ -1,4 +1,4 @@
-// Ghost Game
+// Bob's Adventure
 // The top half is the game rules (no drawing), so it can be tested on its own.
 // The bottom half draws the game and reads the keyboard in the browser.
 
@@ -45,6 +45,9 @@ const FRANK_CHANCE = 0.7;     // chance Frank shows up in a level that has F spo
 const FRANK_AFTER = 0.6;      // he can appear once Bob is this far across the level
 const FRANK_TIME = 2.4;       // seconds Frank stays
 
+// Portals
+const PORTAL_SPARKLE = "#c79bff";
+
 function parseLevel(level) {
   const rows = level.grid.split("\n").filter((r) => r.trim() !== "");
   const tiles = [];
@@ -54,6 +57,7 @@ function parseLevel(level) {
   const hooks = [];
   const frankSpots = [];
   const zipPosts = [];
+  const portals = [];
   const moss = new Map();     // tile index -> { state, timer }
   const pitCells = new Map(); // tile index under moss -> moss tile index above it
   let start = { col: 1, row: 1 };
@@ -72,6 +76,7 @@ function parseLevel(level) {
       if (ch === "H") { hooks.push({ col, row, taken: false }); ch = "."; }
       if (ch === "F") { frankSpots.push({ col, row }); ch = "."; }
       if (ch === "Z") { zipPosts.push({ col, row }); ch = "."; }
+      if (ch === "P") { portals.push({ col, row }); ch = "."; }
       cells.push(ch);
     }
     tiles.push(cells);
@@ -94,6 +99,8 @@ function parseLevel(level) {
   return {
     name: level.name, tiles, start, stalactites, lanterns, moss, pitCells,
     presents, hooks, frankSpots, zips,
+    portals: portals.length === 2 ? portals : [], // they only work as a pair
+    loosePortals: portals.length === 2 ? [] : portals,
   };
 }
 
@@ -115,6 +122,7 @@ function createWorld(level, tuning = DEFAULT_TUNING, frankChance = FRANK_CHANCE)
     frank: null,      // { col, row, time } while Frank is visiting
     frankChance,
     frankRolled: false,
+    inPortal: -1,     // the portal Bob is standing in; it won't send him back until he steps out
   };
   resetHazards(world);
   placeBob(world);
@@ -149,6 +157,37 @@ function placeBob(world, state = "alive") {
     burst: false,
     pitTime: 0,
   };
+  world.inPortal = portalUnder(world);
+}
+
+// The part of a portal tile that sends Bob through
+function portalBox(p) {
+  return { x: p.col * TILE + 10, y: p.row * TILE + 6, w: TILE - 20, h: TILE - 6 };
+}
+
+function portalUnder(world) {
+  const box = bobBox(world.bob);
+  return world.map.portals.findIndex((p) => overlaps(box, portalBox(p)));
+}
+
+// Walking into one portal sends Bob out of the other, still moving the same way
+function stepPortals(world) {
+  const bob = world.bob;
+  const inside = portalUnder(world);
+  if (inside !== -1 && world.inPortal === -1) {
+    const from = world.map.portals[inside];
+    const toIndex = 1 - inside;
+    const to = world.map.portals[toIndex];
+    sparkle(world, from.col * TILE + 20, from.row * TILE + 20, PORTAL_SPARKLE);
+    bob.x = to.col * TILE + (TILE - BOB_W) / 2;
+    bob.y = (to.row + 1) * TILE - BOB_H;
+    bob.squash = 1;
+    sparkle(world, to.col * TILE + 20, to.row * TILE + 20, PORTAL_SPARKLE);
+    setMood(bob, "surprised", 0.6);
+    world.inPortal = toIndex;
+  } else {
+    world.inPortal = inside;
+  }
 }
 
 function tileAt(world, col, row) {
@@ -378,6 +417,7 @@ function stepThings(world, input, dt) {
   const t = world.tuning;
 
   collectPresents(world);
+  stepPortals(world);
 
   // What could Bob use with the interact key?
   world.near = null;
@@ -755,6 +795,7 @@ if (typeof window !== "undefined") {
     rope: "#e2d3ad",
     slime: "#79d66f",
     slimeDark: "#4fa548",
+    portal: "#c79bff",
   };
   // Things that come in later steps still show as dashed boxes
   const PLACEHOLDERS = new Set(["R"]);
@@ -1040,6 +1081,58 @@ if (typeof window !== "undefined") {
     ctx.lineTo(cx + 17, bottom);
     ctx.closePath();
     ctx.fill();
+  }
+
+  // A swirling purple doorway. Both portals look the same so it's clear they go together.
+  function drawPortal(p, awake) {
+    const cx = p.col * TILE + TILE / 2, cy = p.row * TILE + 18;
+    const t = world.time;
+    ctx.save();
+    if (awake) {
+      const pulse = 0.85 + 0.15 * Math.sin(t * 3 + p.col);
+      const glow = ctx.createRadialGradient(cx, cy, 4, cx, cy, 46 * pulse);
+      glow.addColorStop(0, "rgba(199, 155, 255, 0.55)");
+      glow.addColorStop(1, "rgba(199, 155, 255, 0)");
+      ctx.fillStyle = glow;
+      ctx.fillRect(cx - 50, cy - 50, 100, 100);
+    } else {
+      ctx.globalAlpha = 0.45;
+    }
+    ctx.fillStyle = awake ? "#2a1650" : "#252a40";
+    ctx.strokeStyle = COLORS.outline;
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.ellipse(cx, cy, 15, 22, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.strokeStyle = awake ? COLORS.portal : "#8c93b3";
+    ctx.lineWidth = 3.5;
+    ctx.stroke();
+    if (awake) {
+      // The swirl inside
+      ctx.strokeStyle = "rgba(199, 155, 255, 0.8)";
+      ctx.lineWidth = 2;
+      for (let i = 0; i < 3; i++) {
+        const a = t * 3 + (i * Math.PI * 2) / 3;
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, 9 - i * 2.5, 14 - i * 4, 0, a, a + Math.PI * 1.1);
+        ctx.stroke();
+      }
+      // Sparkles going round the edge
+      ctx.fillStyle = "#ffffff";
+      for (let i = 0; i < 5; i++) {
+        const a = -t * 2 + (i * Math.PI * 2) / 5;
+        ctx.beginPath();
+        ctx.arc(cx + Math.cos(a) * 15, cy + Math.sin(a) * 22, 1.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawPortals() {
+    for (const p of world.map.portals) drawPortal(p, true);
+    for (const p of world.map.loosePortals) drawPortal(p, false);
   }
 
   function drawStalactites() {
@@ -1504,6 +1597,7 @@ if (typeof window !== "undefined") {
       for (let c = 0; c < COLS; c++)
         if (world.map.tiles[r][c] === "X") drawExit(c * TILE, r * TILE);
     drawZips();
+    drawPortals();
     drawStalactites();
     drawPresents();
     drawHooks();

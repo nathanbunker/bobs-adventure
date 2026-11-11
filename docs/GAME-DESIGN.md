@@ -125,6 +125,13 @@ Sit on the ground (or at the bottom of a gap). Touching them poofs Bob.
 ### Bouncy slime
 A wobbly green blob. Landing on it launches Bob very high, high enough to get over walls he could never jump. Holding jump while landing gives an extra-high bounce.
 
+### Portal
+A swirling purple doorway. Portals always come in a **pair**, and the pair stays inside one level.
+- Walking (or falling) into one portal sends Bob straight out of the other one, still moving the same way. Bob turns Surprised, and both portals sparkle.
+- Portals work **both ways**. Walking into the second one sends Bob back to the first.
+- The portal Bob comes out of won't send him back until he has stepped out of it, so he never bounces back and forth.
+- A level has **exactly two** portals or none. One portal on its own shows as a dim, sleeping portal that does nothing. In the Level Workshop, placing a third portal moves the closest one instead.
+
 ### Exit
 A glowing opening in the cave wall. Touching it finishes the level (Bob turns Happy). A "Level complete!" screen shows the presents found in that level.
 
@@ -152,6 +159,7 @@ Every level is a grid of letters, **32 wide × 18 tall**. Each letter is one til
 | `M` | Moss (looks like ground, but crumbles) |
 | `~` | Bouncy slime |
 | `F` | A spot where Frank might pop in |
+| `P` | Portal (exactly two per level; walk into one to come out of the other) |
 | `R` | Ruby (for the ending or a special level) |
 
 Lowercase and uppercase both work, and the grid can be typed in any plain text editor.
@@ -219,6 +227,15 @@ Adds new tools (hook, zip line, slime), then brings back the earlier dangers.
 7. **Frank** may pop in near the end.
 
 *These two grids are first drafts based on her drawings. She should change anything that doesn't match what she imagined.*
+
+### Level 5: "Through the Portal"
+
+Shows off the portals. The cave is split into two parts with solid rock between them:
+- **Downstairs:** Bob starts here. The exit is on the far side of a long spike pit with a zip line over it, but the hook is not downstairs.
+- **Upstairs:** a portal takes Bob up here, where he hops a few spikes, ducks a stalactite and climbs to the hook.
+- Then he goes back down through the same pair of portals, rides the zip line over the spikes (picking up presents on the way) and reaches the exit.
+
+So the level only works by using the portals in both directions.
 
 ---
 

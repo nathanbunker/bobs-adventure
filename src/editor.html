@@ -169,6 +169,7 @@ const BLOCKS = [
   { ch: "H", name: "Hook" },
   { ch: "Z", name: "Zip line post", tip: "two on one row" },
   { ch: "F", name: "Frank's spot", tip: "he might pop in" },
+  { ch: "P", name: "Portal", tip: "always two" },
 ];
 const NAMES = Object.fromEntries(BLOCKS.map((b) => [b.ch, b.name]));
 
@@ -176,7 +177,7 @@ const COLORS = {
   sky: "#151b30", rock: "#3b4675", rockTop: "#5a68a0", mossTop: "#6f9a63", mossTuft: "#86b277",
   outline: "#333333", spike: "#c9cfe8", stalactite: "#8e9bc9", lantern: "#ffe9a8", exit: "#fff4cf",
   present: "#ffd27a", bow: "#ff5c8a", metal: "#d5dbef", wood: "#9a7350", rope: "#e2d3ad",
-  slime: "#79d66f", slimeDark: "#4fa548", grid: "rgba(238, 241, 255, 0.06)", hover: "#ffe9a8",
+  slime: "#79d66f", slimeDark: "#4fa548", portal: "#c79bff", grid: "rgba(238, 241, 255, 0.06)", hover: "#ffe9a8",
 };
 
 const bobImg = new Image(); bobImg.src = "art/ghost-content.svg";
@@ -234,6 +235,17 @@ function setCell(c, r, ch) {
   if (ch === "B") {
     // Bob only starts in one place, so move him
     for (const row of grid) for (let i = 0; i < COLS; i++) if (row[i] === "B") row[i] = ".";
+  }
+  if (ch === "P") {
+    // There are only ever two portals, so a third one moves the closest one here
+    const others = [];
+    for (let rr = 0; rr < ROWS; rr++)
+      for (let cc = 0; cc < COLS; cc++)
+        if (grid[rr][cc] === "P") others.push({ c: cc, r: rr });
+    if (others.length >= 2) {
+      others.sort((a, b) => Math.hypot(a.c - c, a.r - r) - Math.hypot(b.c - c, b.r - r));
+      grid[others[0].r][others[0].c] = ".";
+    }
   }
   grid[r][c] = ch;
 }
@@ -321,6 +333,19 @@ function drawTile(ctx, ch, x, y, g, c, r) {
       ctx.arc(cx, y + 18, 15, Math.PI, 0); ctx.lineTo(cx + 15, y + TILE); ctx.closePath(); ctx.fill();
       break;
     }
+    case "P": {
+      const cx = x + 20, cy = y + 18;
+      const glow = ctx.createRadialGradient(cx, cy, 4, cx, cy, 30);
+      glow.addColorStop(0, "rgba(199, 155, 255, 0.5)");
+      glow.addColorStop(1, "rgba(199, 155, 255, 0)");
+      ctx.fillStyle = glow; ctx.fillRect(x - 10, y - 12, 60, 60);
+      ctx.fillStyle = "#2a1650"; ctx.strokeStyle = COLORS.outline; ctx.lineWidth = 6;
+      ctx.beginPath(); ctx.ellipse(cx, cy, 14, 19, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = COLORS.portal; ctx.lineWidth = 3.5; ctx.stroke();
+      ctx.strokeStyle = "rgba(199, 155, 255, 0.8)"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.ellipse(cx, cy, 7, 10, 0, 0.5, 4); ctx.stroke();
+      break;
+    }
     case "B":
       if (bobImg.complete && bobImg.naturalWidth) ctx.drawImage(bobImg, x - 4, y + 2, 48, 43);
       break;
@@ -389,6 +414,10 @@ function checks() {
     const z = grid[r].filter((x) => x === "Z").length;
     if (z % 2 === 1) out.push(["warn", `Row ${r + 1}: a zip line post needs a partner on the same row.`]);
   }
+  const portals = count("P");
+  if (portals === 1) out.push(["warn", "A portal needs a partner. Put one more <b>P</b> somewhere, then Bob can go between them."]);
+  else if (portals === 2) out.push(["good", "The two portals are joined. Walk into one to come out of the other."]);
+  else if (portals > 2) out.push(["bad", `There are ${portals} portals, but only two can be joined. Take some away.`]);
   if (count("Z") >= 2 && count("H") === 0) out.push(["warn", "There's a zip line but no hook (<b>H</b>) to find."]);
   for (let r = 0; r < ROWS; r++)
     for (let c = 0; c < COLS; c++)
