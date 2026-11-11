@@ -44,3 +44,13 @@ powershell -ExecutionPolicy Bypass -File build-war.ps1
 ```
 
 This writes `dist/bobs-adventure.war`. Put it in Tomcat's `webapps/` folder and the game is served at `/bobs-adventure/`. The build adds a version stamp to the script URLs, so browsers load the new levels after a deploy.
+
+### Deploying to production
+
+The live game is at https://dandelion-daily.org/bobs-adventure/, on the same server as Dandelion. One command, run from PowerShell in `C:\dev\bunker\dandelion`, builds this project, uploads it, and swaps it in without restarting Tomcat:
+
+```powershell
+.\deploy\deploy.ps1 bobs-adventure
+```
+
+Commit first; the build uses whatever is in `src/`. Details are in the Dandelion repo's `docs/Dandelion-Deployment.md`.
